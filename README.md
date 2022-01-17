@@ -1,8 +1,8 @@
-# web2-nodejs-mysql
+# web2-nodejs-express
 
-### basic nodejs CRUD example with mysql
+### basic node Express CRUD example with mysql
 
-from [Opentutorials](https://opentutorials.org/course/3347)
+from [Opentutorials](https://opentutorials.org/course/3370)
 
 ### Usage
 
