@@ -1,9 +1,23 @@
 const express = require('express');
+const compression = require('compression');
+const db = require('./lib/db');
 const topic = require('./lib/topic');
 const author = require('./lib/author');
 
 const app = express();
 app.use(express.urlencoded({ extended: false }));
+app.use(compression());
+
+app.get('*', (req, res, next) => {
+  db.query(`select id, title from topic`, (err, topics) => {
+    if (err) {
+      next(err);
+    }
+
+    req.list = topics;
+    next();
+  });
+});
 
 app.get('/', (req, res) => {
   res.redirect('/topic');
