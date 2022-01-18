@@ -1,5 +1,6 @@
 const express = require('express');
 const compression = require('compression');
+const cookieParser = require('cookie-parser');
 const db = require('./lib/db');
 const topic = require('./lib/topic');
 const author = require('./lib/author');
@@ -8,6 +9,7 @@ const app = express();
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(compression());
+app.use(cookieParser());
 
 app.get('*', (req, res, next) => {
   db.query(`select id, title from topic`, (err, topics) => {
@@ -70,6 +72,11 @@ app.post('/author/update', (req, res) => {
 
 app.post('/author/delete', (req, res) => {
   author.delete_process(req, res);
+});
+
+app.get('/theme/:mode', (req, res) => {
+  res.cookie('theme', req.params.mode);
+  res.send(`<script>window.location = document.referrer;</script>`);
 });
 
 app.use(function (req, res) {
