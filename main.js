@@ -1,7 +1,10 @@
 const express = require('express');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 const db = require('./lib/db');
+const dev = require('./config/dev');
 
 const indexRouter = require('./routes/index');
 const topicRouter = require('./routes/topic');
@@ -12,6 +15,15 @@ const app = express();
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(
+  session({
+    key: 'session_cookie_name',
+    secret: 'session_cookie_secret',
+    store: new MySQLStore(dev.dbOptions),
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 app.use(compression());
 
 app.get('*', (req, res, next) => {
