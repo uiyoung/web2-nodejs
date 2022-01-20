@@ -6,11 +6,6 @@ const MySQLStore = require('express-mysql-session')(session);
 const db = require('./lib/db');
 const dev = require('./config/dev');
 
-const indexRouter = require('./routes/index');
-const topicRouter = require('./routes/topic');
-const authorRouter = require('./routes/author');
-const themeRouter = require('./routes/theme');
-
 const app = express();
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
@@ -26,7 +21,14 @@ app.use(
 );
 app.use(compression());
 
+const indexRouter = require('./routes/index');
+const topicRouter = require('./routes/topic');
+const authorRouter = require('./routes/author');
+const themeRouter = require('./routes/theme');
+const authRouter = require('./routes/auth');
+
 app.get('*', (req, res, next) => {
+  console.log(req.session);
   db.query(`select id, title from topic`, (err, topics) => {
     if (err) {
       next(err);
@@ -41,6 +43,7 @@ app.use('/', indexRouter);
 app.use('/topic', topicRouter);
 app.use('/author', authorRouter);
 app.use('/theme', themeRouter);
+app.use('/auth', authRouter);
 
 app.use((req, res) => {
   res.status(404).send('Sorry cant find that!');

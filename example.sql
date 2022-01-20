@@ -35,3 +35,19 @@ INSERT INTO `topic` VALUES (2,'Oracle','Oracle is ...','2018-01-03 13:01:10',1);
 INSERT INTO `topic` VALUES (3,'SQL Server','SQL Server is ...','2018-01-20 11:01:10',2);
 INSERT INTO `topic` VALUES (4,'PostgreSQL','PostgreSQL is ...','2018-01-23 01:03:03',3);
 INSERT INTO `topic` VALUES (5,'MongoDB','MongoDB is ...','2018-01-30 12:31:03',1);
+
+
+CREATE TABLE opentutorials.users (
+id INT NOT NULL AUTO_INCREMENT,
+email VARCHAR(50) NOT NULL,
+password varchar(100) not null,
+created_at DATETIME NOT NULL DEFAULT now(),
+PRIMARY KEY(id),
+UNIQUE INDEX name_UNIQUE (email ASC))
+COMMENT = '사용자 정보'
+DEFAULT CHARACTER SET = utf8
+ENGINE = InnoDB;
+
+
+
+insert into users(email, password) values('asdf@asdf.com', 'asdf')
