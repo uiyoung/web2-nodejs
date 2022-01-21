@@ -1,6 +1,6 @@
 # web2-nodejs-express
 
-### basic node Express CRUD example with mysql
+### basic node Express CRUD example with express-session, mysql
 
 from [Opentutorials](https://opentutorials.org/course/3370)
 
