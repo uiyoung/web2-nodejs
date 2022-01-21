@@ -1,9 +1,10 @@
 # web2-nodejs
 basic nodejs CRUD examples from OpenTutorials
 
-- [fs example](https://github.com/uiyoung/web2-nodejs/tree/main)
-- [MySQL example](https://github.com/uiyoung/web2-nodejs/tree/mysql)
-- [Express example](https://github.com/uiyoung/web2-nodejs/tree/express)
+- [fs example](https://github.com/uiyoung/web2-nodejs/tree/feature/fs)
+- [MySQL example](https://github.com/uiyoung/web2-nodejs/tree/feature/mysql)
+- [Express example](https://github.com/uiyoung/web2-nodejs/tree/feature/express)
+- [express-session(mysql) example](https://github.com/uiyoung/web2-nodejs/tree/feature/express-session)
 
 tutorial from OpenTutorials
 - [web2-nodejs](https://opentutorials.org/course/3332)
