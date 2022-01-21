@@ -41,13 +41,14 @@ CREATE TABLE opentutorials.users (
 id INT NOT NULL AUTO_INCREMENT,
 email VARCHAR(50) NOT NULL,
 password varchar(100) not null,
+nickname varchar(30),
 created_at DATETIME NOT NULL DEFAULT now(),
 PRIMARY KEY(id),
-UNIQUE INDEX name_UNIQUE (email ASC))
+UNIQUE INDEX email_UNIQUE (email ASC))
 COMMENT = '사용자 정보'
 DEFAULT CHARACTER SET = utf8
 ENGINE = InnoDB;
 
 
 
-insert into users(email, password) values('asdf@asdf.com', 'asdf')
+insert into users(email, password, nickname) values('asdf@asdf.com', 'asdf', 'ahoy')
