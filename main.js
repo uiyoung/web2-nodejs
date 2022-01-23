@@ -12,6 +12,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   session({
+    secure: true,
+    HttpOnly: true,
     key: 'session_cookie_name',
     secret: 'session_cookie_secret',
     store: new MySQLStore(dev.dbOptions),
