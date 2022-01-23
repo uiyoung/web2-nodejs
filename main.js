@@ -5,6 +5,7 @@ const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const db = require('./lib/db');
 const dev = require('./config/dev');
+const passport = require('passport');
 
 const app = express();
 app.use(express.static('public'));
@@ -22,10 +23,12 @@ app.use(
   })
 );
 app.use(compression());
+app.use(passport.initialize());
+app.use(passport.session());
 
 const indexRouter = require('./routes/index');
-const topicRouter = require('./routes/topic');
 const authorRouter = require('./routes/author');
+const topicRouter = require('./routes/topic');
 const themeRouter = require('./routes/theme');
 const authRouter = require('./routes/auth');
 
