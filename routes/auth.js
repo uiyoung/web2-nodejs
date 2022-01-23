@@ -2,6 +2,7 @@ const express = require('express');
 const template = require('../lib/template');
 const router = express.Router();
 const db = require('../lib/db');
+const theme = require('../lib/theme');
 
 router.get('/login', (req, res) => {
   const title = 'WEB - login';
@@ -12,7 +13,7 @@ router.get('/login', (req, res) => {
     <input type='submit' value='login'>
   </form>`;
 
-  const html = template.HTML(title, '', '', `<h2>Login</h2>${form}`);
+  const html = template.HTML(title, '', '', `<h2>Login</h2>${form}`, theme.css(req.cookies.theme), '');
   res.send(html);
 });
 
@@ -27,7 +28,7 @@ router.get('/signup', (req, res) => {
     <input type='submit' value='sign up'>
   </form>`;
 
-  const html = template.HTML(title, '', '', `<h2>Sign Up</h2>${form}`);
+  const html = template.HTML(title, '', '', `<h2>Sign Up</h2>${form}`, theme.css(req.cookies.theme), '');
   res.send(html);
 });
 
