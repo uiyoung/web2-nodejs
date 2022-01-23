@@ -38,11 +38,12 @@ router.post('/login', (req, res) => {
     (err, result) => {
       if (err) next(err);
 
-      console.log(result.length);
       if (result.length) {
         req.session.is_logined = true;
         req.session.nickname = result[0].nickname;
-        res.redirect('/');
+        req.session.save(() => {
+          res.redirect('/');
+        });
       } else {
         res.send('who?');
       }
