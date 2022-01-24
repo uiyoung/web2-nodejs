@@ -2,9 +2,9 @@ const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const template = require('../lib/template');
-const router = express.Router();
 const db = require('../lib/db');
 const theme = require('../lib/theme');
+const router = express.Router();
 
 passport.use(
   new LocalStrategy(
@@ -44,14 +44,6 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-router.post(
-  '/login',
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/auth/login',
-  })
-);
-
 router.get('/login', (req, res) => {
   const title = 'WEB - login';
   const form = `
@@ -63,6 +55,19 @@ router.get('/login', (req, res) => {
 
   const html = template.HTML(title, '', '', `<h2>Login</h2>${form}`, theme.css(req.cookies.theme), '');
   res.send(html);
+});
+
+router.post(
+  '/login',
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/auth/login',
+  })
+);
+
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
 });
 
 router.get('/signup', (req, res) => {
@@ -80,37 +85,6 @@ router.get('/signup', (req, res) => {
   res.send(html);
 });
 
-// router.post('/login', (req, res) => {
-//   db.query(
-//     `SELECT email, password, nickname FROM users where email = ? AND password = ?`,
-//     [req.body.email, req.body.password],
-//     (err, result) => {
-//       if (err) next(err);
-
-//       if (result.length) {
-//         req.session.is_logined = true;
-//         req.session.nickname = result[0].nickname;
-//         req.session.save(() => {
-//           res.redirect('/');
-//         });
-//       } else {
-//         res.send('who?');
-//       }
-//     }
-//   );
-// });
-
-// router.get('/logout', (req, res) => {
-//   req.session.destroy((err) => {
-//     if (err) next(err);
-//     res.redirect('/');
-//   });
-// });
-router.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
-});
-
 router.post('/signup', (req, res) => {
   db.query(`SELECT * FROM users WHERE email = ?`, [req.body.email], (err, results) => {
     if (err) next(err);
@@ -123,6 +97,7 @@ router.post('/signup', (req, res) => {
         [req.body.email, req.body.password, req.body.nickname],
         (err, result) => {
           if (err) next(err);
+
           res.json({ result: 'ok' });
         }
       );
