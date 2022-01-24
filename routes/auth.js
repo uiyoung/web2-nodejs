@@ -17,14 +17,15 @@ passport.use(
         if (err) {
           return done(err);
         }
-        if (!row) {
+        console.log(row);
+        if (row.length === 0) {
           return done(null, false, { message: 'Incorrect username or password' });
         }
 
         if (row[0].password != password) {
           return done(null, false, { message: 'Incorrect username or password' });
         }
-        return done(null, row[0]);
+        return done(null, row[0], { message: 'Welcome' });
       });
     }
   )
@@ -45,13 +46,17 @@ passport.deserializeUser((id, done) => {
 });
 
 router.get('/login', (req, res) => {
+  const flash = req.flash();
+  const flashMessage = flash.error ? flash.error[0] : '';
   const title = 'WEB - login';
   const form = `
   <form action='/auth/login' method='post'>
     <p><input type='email' name='email' placeholder='email'></p>
     <p><input type='password' name='password' placeholder='password'></p>
     <input type='submit' value='login'>
-  </form>`;
+  </form>
+  ${flashMessage}
+  `;
 
   const html = template.HTML(title, '', '', `<h2>Login</h2>${form}`, theme.css(req.cookies.theme), '');
   res.send(html);
@@ -62,6 +67,8 @@ router.post(
   passport.authenticate('local', {
     successRedirect: '/',
     failureRedirect: '/auth/login',
+    failureFlash: true,
+    successFlash: true,
   })
 );
 
@@ -74,9 +81,9 @@ router.get('/signup', (req, res) => {
   const title = 'WEB - Sign Up';
   const form = `
   <form action='/auth/signup' method='post'>
-    <p><input type='email' name='email' placeholder='email'></p>
-    <p><input type='password' name='password' placeholder='password'></p>
-    <p><input type='text' name='nickname' placeholder='nickname'></p>
+    <p><input type='email' name='email' placeholder='email' required></p>
+    <p><input type='password' name='password' placeholder='password' required></p>
+    <p><input type='text' name='nickname' placeholder='nickname' required></p>
     <!-- todo : confirm password --!>
     <input type='submit' value='sign up'>
   </form>`;

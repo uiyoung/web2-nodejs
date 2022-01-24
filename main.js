@@ -6,6 +6,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const db = require('./lib/db');
 const dev = require('./config/dev');
 const passport = require('passport');
+const flash = require('connect-flash');
 
 const app = express();
 app.use(express.static('public'));
@@ -22,9 +23,10 @@ app.use(
     saveUninitialized: false,
   })
 );
-app.use(compression());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
+app.use(compression());
 
 const indexRouter = require('./routes/index');
 const authorRouter = require('./routes/author');
