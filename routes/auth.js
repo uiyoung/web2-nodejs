@@ -85,11 +85,11 @@ router.get('/signup', (req, res) => {
   res.send(html);
 });
 
-router.post('/signup', (req, res) => {
-  db.query(`SELECT * FROM users WHERE email = ?`, [req.body.email], (err, results) => {
+router.post('/signup', (req, res, next) => {
+  db.query(`SELECT * FROM users WHERE email = ?`, [req.body.email], (err, result) => {
     if (err) next(err);
 
-    if (results.length) {
+    if (result.length) {
       res.json({ result: 'fail' });
     } else {
       db.query(
@@ -98,7 +98,17 @@ router.post('/signup', (req, res) => {
         (err, result) => {
           if (err) next(err);
 
-          res.json({ result: 'ok' });
+          const user = {
+            email: req.body.email,
+          };
+
+          req.login(user, (err) => {
+            if (err) {
+              return next(err);
+            }
+
+            res.redirect('/');
+          });
         }
       );
     }
