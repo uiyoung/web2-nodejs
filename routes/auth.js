@@ -13,19 +13,20 @@ passport.use(
       passwordField: 'password',
     },
     (email, password, done) => {
-      db.query(`SELECT * FROM users WHERE email= ?`, [email], (err, row) => {
+      db.query(`SELECT * FROM users WHERE email= ?`, [email], (err, user) => {
         if (err) {
           return done(err);
         }
-        console.log(row);
-        if (row.length === 0) {
-          return done(null, false, { message: 'Incorrect username or password' });
+
+        if (user.length === 0) {
+          return done(null, false, { message: 'Incorrect username' });
         }
 
-        if (row[0].password != password) {
-          return done(null, false, { message: 'Incorrect username or password' });
+        if (user[0].password != password) {
+          return done(null, false, { message: 'Incorrect password' });
         }
-        return done(null, row[0], { message: 'Welcome' });
+
+        return done(null, user[0], { message: 'Welcome' });
       });
     }
   )
@@ -33,15 +34,17 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   console.log('serializeUser', user);
+
   done(null, user.email);
 });
 
 passport.deserializeUser((id, done) => {
   console.log('deserializeuser', id);
+
   db.query(`SELECT * FROM users WHERE email = ?`, [id], (err, row) => {
     if (err) throw err;
 
-    done(err, row[0]);
+    done(null, row[0]);
   });
 });
 
@@ -112,9 +115,7 @@ router.post('/signup', (req, res, next) => {
         (err, result) => {
           if (err) next(err);
 
-          const user = {
-            email: req.body.email,
-          };
+          const user = { email: req.body.email };
 
           req.login(user, (err) => {
             if (err) {
