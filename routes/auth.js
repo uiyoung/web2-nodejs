@@ -78,10 +78,15 @@ router.get('/logout', (req, res) => {
 });
 
 router.get('/signup', (req, res) => {
+  const flash = req.flash();
+  const flashMessage = flash.error ? flash.error[0] : '';
   const title = 'WEB - Sign Up';
   const form = `
   <form action='/auth/signup' method='post'>
-    <p><input type='email' name='email' placeholder='email' required></p>
+    <p>
+      <input type='email' name='email' placeholder='email' required>
+      ${flashMessage}
+    </p>
     <p><input type='password' name='password' placeholder='password' required></p>
     <p><input type='text' name='nickname' placeholder='nickname' required></p>
     <!-- todo : confirm password --!>
@@ -97,7 +102,9 @@ router.post('/signup', (req, res, next) => {
     if (err) next(err);
 
     if (result.length) {
-      res.json({ result: 'fail' });
+      // res.json({ result: 'fail' });
+      req.flash('error', 'email already exists.');
+      res.redirect('/auth/signup');
     } else {
       db.query(
         `INSERT INTO users(email, password, nickname) VALUES (?, ?, ?)`,
