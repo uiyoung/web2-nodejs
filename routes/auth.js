@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const bcrypt = require('bcrypt');
 const LocalStrategy = require('passport-local');
 const template = require('../lib/template');
 const db = require('../lib/db');
@@ -13,7 +14,7 @@ passport.use(
       passwordField: 'password',
     },
     (email, password, done) => {
-      db.query(`SELECT * FROM users WHERE email= ?`, [email], (err, user) => {
+      db.query(`SELECT * FROM users WHERE email= ?`, [email], async (err, user) => {
         if (err) {
           return done(err);
         }
@@ -22,7 +23,8 @@ passport.use(
           return done(null, false, { message: 'Incorrect username' });
         }
 
-        if (user[0].password != password) {
+        const result = await bcrypt.compare(password, user[0].password);
+        if (!result) {
           return done(null, false, { message: 'Incorrect password' });
         }
 
@@ -102,21 +104,25 @@ router.get('/signup', (req, res) => {
 });
 
 router.post('/signup', (req, res, next) => {
-  db.query(`SELECT * FROM users WHERE email = ?`, [req.body.email], (err, result) => {
+  const { email, password, nickname } = req.body;
+
+  db.query(`SELECT * FROM users WHERE email = ?`, [email], async (err, result) => {
     if (err) next(err);
 
     if (result.length) {
-      // res.json({ result: 'fail' });
       req.flash('error', 'email already exists.');
       res.redirect('/auth/signup');
     } else {
+      const saltRounds = 12;
+      const hash = await bcrypt.hash(password, saltRounds);
+
       db.query(
         `INSERT INTO users(email, password, nickname) VALUES (?, ?, ?)`,
-        [req.body.email, req.body.password, req.body.nickname],
+        [email, hash, nickname],
         (err, result) => {
           if (err) next(err);
 
-          const user = { email: req.body.email };
+          const user = { email: email };
 
           req.login(user, (err) => {
             if (err) {
